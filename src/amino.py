@@ -18,7 +18,7 @@ class Amino:
 			self,
 			device_id: str = None,
 			proxies: dict = None) -> None:
-		self.api = "https://service.aminoapps.com/api/v1/"
+		self.api = "https://service.aminoapps.com/api/v1"
 		self.device_id = self.generate_device_id(urandom(20)) if not device_id else device_id
 		self.headers = {
 			"NDCLANG": "en",
