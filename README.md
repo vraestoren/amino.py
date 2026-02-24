@@ -3,7 +3,8 @@ Mobile-API for amino social network
 
 ## Example
 ```python3
-import amino
-client = amino.Amino()
-client.login(email="", password="")
+from amino import Amino
+
+client = Amino()
+client.login(email="example@gmail.com", password="password")
 ```
