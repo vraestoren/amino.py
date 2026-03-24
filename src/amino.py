@@ -11,6 +11,7 @@ from base64 import b64encode
 from websocket import create_connection
 from locale import getdefaultlocale as locale
 
+
 class Amino:
 	def __init__(
 			self,
@@ -33,8 +34,7 @@ class Amino:
 			"User-Agent": "Dalvik/2.1.0 (Linux; U; Android 12; com.narvii.amino.master/3.5.35071)",
 			"Host": "service.aminoapps.com",
 			"Accept-Encoding": "gzip, deflate, br",
-			"Connection": "Keep-Alive"
-		}
+			"Connection": "Keep-Alive"}
 		if proxies:
 			self.session.proxies.update(proxies)
 
@@ -63,13 +63,14 @@ class Amino:
 			bytes.fromhex("52") + new(
 				bytes.fromhex("EAB4F1B9E3340CD1631EDE3B587CC3EBEDF1AFA9"),
 				data.encode("utf-8"),
-				sha1).digest()/decode("utf-8"))
+				sha1).digest() / decode("utf-8"))
 		return self.session.headers["NDC-MSG-SIG"]
 
 	def _device_id(self, identifier: bytes) -> str:
-		return (
-			"52" + identifier.hex() + new(
-				bytes.fromhex("AE49550458D8E7C51D566916B04888BFB8B3CA7D"), b"\x52" + identifier, sha1).hexdigest().upper())
+		return ("52" +
+				identifier.hex() +
+				new(bytes.fromhex("AE49550458D8E7C51D566916B04888BFB8B3CA7D"), b"\x52" +
+					identifier, sha1).hexdigest().upper())
 
 	def reload_socket(self) -> None:
 		data = f"{self.device_id}|{int(time() * 1000)}"
@@ -93,7 +94,7 @@ class Amino:
 		while True:
 			try:
 				return loads(self.wss.recv())
-			except:
+			except BaseException:
 				self.reload_socket()
 				continue
 
@@ -236,11 +237,17 @@ class Amino:
 		return self._get("/g/s/wallet")
 
 	def get_wallet_history(self, start: int = 0, size: int = 25) -> dict:
-		params = {"start": start, "size": size}
+		params = {
+			"start": start,
+			"size": size
+		}
 		return self._get("/g/s/wallet/coin/history", params=params)
 
 	def my_communities(self, start: int = 0, size: int = 25) -> dict:
-		params = {"start": start, "size": size}
+		params = {
+			"start": start,
+			"size": size
+		}
 		return self._get("/g/s/community/joined", params=params)
 
 	def watch_ad(self) -> dict:
@@ -269,7 +276,10 @@ class Amino:
 			self,
 			ndc_id: int = 0,
 			tz: int = -int(timezone) // 1000) -> dict:
-		data = {"timezone": tz, "timestamp": self._timestamp()}
+		data = {
+			"timezone": tz,
+			"timestamp": self._timestamp()
+		}
 		return self._post(f"/x{ndc_id}/s/check-in", data)
 
 	def lottery(self, ndc_id: int, tz: int = -int(timezone) // 1000) -> dict:
@@ -282,7 +292,11 @@ class Amino:
 			status: str = "normal",
 			start: int = 0,
 			size: int = 25) -> dict:
-		params = {"status": status, "start": start, "size": size}
+		params = {
+			"status": status,
+			"start": start,
+			"size": size
+		}
 		return self._get(f"/g/s-x{ndc_id}/community/invitation", params=params)
 
 	def get_user(self, ndc_id: int, user_id: str) -> dict:
@@ -315,7 +329,10 @@ class Amino:
 			user_id: str,
 			start: int = 0,
 			size: int = 25) -> dict:
-		params = {"start": start, "size": size}
+		params = {
+			"start": start,
+			"size": size
+		}
 		return self._get(
 			f"/x{ndc_id}/s/user-profile/{user_id}/joined",
 			params=params)
@@ -326,7 +343,10 @@ class Amino:
 			user_id: str,
 			start: int = 0,
 			size: int = 25) -> dict:
-		params = {"start": start, "size": size}
+		params = {
+			"start": start,
+			"size": size
+		}
 		return self._get(
 			f"/x{ndc_id}/s/user-profile/{user_id}/member",
 			params=params)
@@ -340,7 +360,8 @@ class Amino:
 			f"/x{ndc_id}/s/user-profile/{self.user_id}/joined/{user_id}")
 
 	def block_user(self, ndc_id: int, user_id: str) -> dict:
-		return self.session.post(f"{self.api}/x{ndc_id}/s/block/{user_id}").json()
+		return self.session.post(
+			f"{self.api}/x{ndc_id}/s/block/{user_id}").json()
 
 	def unblock_user(self, ndc_id: int, user_id: str) -> dict:
 		return self._delete(f"/x{ndc_id}/s/block/{user_id}")
@@ -438,7 +459,11 @@ class Amino:
 			chat_id: str,
 			start: int = 0,
 			size: int = 25) -> dict:
-		params = {"type": "default", "start": start, "size": size}
+		params = {
+			"type": "default",
+			"start": start,
+			"size": size
+		}
 		return self._get(
 			f"/x{ndc_id}/s/chat/thread/{chat_id}/member",
 			params=params)
@@ -448,7 +473,11 @@ class Amino:
 			ndc_id: int,
 			start: int = 0,
 			size: int = 25) -> dict:
-		params = {"type": "joined-me", "start": start, "size": size}
+		params = {
+			"type": "joined-me",
+			"start": start,
+			"size": size
+		}
 		return self._get(f"/x{ndc_id}/s/chat/thread", params=params)
 
 	def get_public_chat_threads(
@@ -456,11 +485,19 @@ class Amino:
 			ndc_id: int,
 			start: int = 0,
 			size: int = 10) -> dict:
-		params = {"ndcId": f"x{ndc_id}", "start": start, "size": size}
+		params = {
+			"ndcId": f"x{ndc_id}",
+			"start": start,
+			"size": size
+		}
 		return self._get("/chat/live-threads", params=params)
 
 	def search_user_chat(self, ndc_id: int, user_id: str) -> dict:
-		params = {"type": "exist-single", "cv": "1.2", "q": user_id}
+		params = {
+			"type": "exist-single",
+			"cv": "1.2",
+			"q": user_id
+		}
 		return self._get(f"/x{ndc_id}/s/chat/thread", params=params)
 
 	def create_chat_thread(
@@ -478,8 +515,7 @@ class Amino:
 
 	def join_chat(self, ndc_id: int, chat_id: str) -> dict:
 		return self.session.post(
-				f"{self.api}/x{ndc_id}/s/chat/thread/{chat_id}/member/{self.user_id}").json()
-
+			f"{self.api}/x{ndc_id}/s/chat/thread/{chat_id}/member/{self.user_id}").json()
 
 	def leave_chat(self, ndc_id: int, chat_id: str) -> dict:
 		return self._delete(
@@ -499,15 +535,16 @@ class Amino:
 			ndc_id: int,
 			chat_id: str,
 			user_id: str,
-			allowRejoin: int = 0) -> dict:
-		params = {"allowRejoin": allowRejoin}
+			allow_rejoin: int = 0) -> dict:
+		params = {"allowRejoin": allow_rejoin}
 		return self._delete(
 			f"/x{ndc_id}/s/chat/thread/{chat_id}/member/{user_id}",
 			params=params)
 
 	def accept_host(self, ndc_id: int, chat_id: str) -> dict:
 		return self._post(
-			f"/x{ndc_id}/s/chat/thread/{chat_id}/accept-organizer", self._base_data())
+			f"/x{ndc_id}/s/chat/thread/{chat_id}/accept-organizer",
+			self._base_data())
 
 	def transfer_host(self, ndc_id: int, chat_id: str, user_ids: list) -> dict:
 		data = {
@@ -549,7 +586,10 @@ class Amino:
 			ndc_id: int,
 			chat_id: str,
 			permission: int) -> dict:
-		data = {"vvChatJoinType": permission, "timestamp": self._timestamp()}
+		data = {
+			"vvChatJoinType": permission,
+			"timestamp": self._timestamp()
+		}
 		return self._post(
 			f"/x{ndc_id}/s/chat/thread/{chat_id}/vvchat-permission", data)
 
@@ -560,8 +600,7 @@ class Amino:
 
 	def thank_tip(self, ndc_id: int, chat_id: str, user_id: str) -> dict:
 		return self.session.post(
-				f"{self.api}/x{ndc_id}/s/chat/thread/{chat_id}/tipping/tipped-users/{user_id}/thank").json()
-
+			f"{self.api}/x{ndc_id}/s/chat/thread/{chat_id}/tipping/tipped-users/{user_id}/thank").json()
 
 	def send_message(
 			self,
@@ -679,7 +718,10 @@ class Amino:
 			ndc_id: int,
 			start: int = 0,
 			size: int = 10) -> dict:
-		params = {"start": start, "size": size}
+		params = {
+			"start": start,
+			"size": size
+		}
 		return self._get(f"/x{ndc_id}/s/notification", params=params)
 
 	def delete_notification(self, ndc_id: int, notification_id: str) -> dict:
@@ -697,7 +739,12 @@ class Amino:
 			user_id: str,
 			start: int = 0,
 			size: int = 25) -> dict:
-		params = {"type": "user", "q": user_id, "start": start, "size": size}
+		params = {
+			"type": "user",
+			"q": user_id,
+			"start": start,
+			"size": size
+		}
 		return self._get(f"/x{ndc_id}/s/blog", params=params)
 
 	def get_recent_blogs(
@@ -705,7 +752,11 @@ class Amino:
 			ndc_id: int,
 			start: int = 0,
 			size: int = 10) -> dict:
-		params = {"pagingType": "t", "start": start, "size": size}
+		params = {
+			"pagingType": "t",
+			"start": start,
+			"size": size
+		}
 		return self._get(f"/x{ndc_id}/s/feed/blog-all", params=params)
 
 	def get_tipped_users_wall(
@@ -714,7 +765,10 @@ class Amino:
 			blog_id: str,
 			start: int = 0,
 			size: int = 25) -> dict:
-		params = {"start": start, "size": size}
+		params = {
+			"start": start,
+			"size": size
+		}
 		return self._get(
 			f"/x{ndc_id}/s/blog/{blog_id}/tipping/tipped-users-summary",
 			params=params)
@@ -725,7 +779,9 @@ class Amino:
 			"eventSource": "UserProfileView",
 			"timestamp": self._timestamp()
 		}
-		params = {"cv": "1.2"}
+		params = {
+			"cv": "1.2"
+		}
 		return self._post(
 			f"/x{ndc_id}/s/blog/{blog_id}/vote",
 			data,
@@ -841,7 +897,7 @@ class Amino:
 		data = json_minify(dumps(data))
 		self._signature(serialized)
 		return self.session.post(
-				f"{self.api}/x{ndc_id}/s/community/stats/user-active-time", data=data).json()
+			f"{self.api}/x{ndc_id}/s/community/stats/user-active-time", data=data).json()
 
 	def create_sticker_pack(
 			self,
